@@ -1,0 +1,11 @@
+---
+# Replace the x's with the IP addresses from "terrafrom output"
+dc:
+  hosts:
+    x.x.x.x:
+
+win10:
+  hosts:
+    z.z.z.z:
+
+
