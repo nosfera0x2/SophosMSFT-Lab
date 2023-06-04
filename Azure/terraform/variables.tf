@@ -1,42 +1,36 @@
-variable "region" {
-  default = "East US"
+variable "enabled" {
+  description = <<EOD
+  If set to `true`, the module will be enabled. Default is `true`.
+  EOD
+  type = bool
+  default = true
 }
 
-variable "profile" {
-  default = "terraform"
+
+variable "create_resource_group" {
+  description = <<EOD
+  If set to `true`, an azurerm_resource_group will be created. Default is `true`.
+  EOD
+  type        = bool
+  default     = true
 }
 
-variable "availability_zone" {
-  description = "https://docs.microsoft.com/en-us/azure/availability-zones/az-overview"
-  default     = ""
+variable "tags" {
+  description = <<EOD
+  A map of tags to apply to the provisioned resources. These will be included with a set of default tags that are already applied to each resource at deployment time.
+  EOD
+  type        = map(string)
+  default     = {}
 }
 
-variable "public_key_name" {
-  description = "A name for SSH Keypair to use to auth to logger. Can be anything you specify."
-  default     = "id_logger"
-}
-
-variable "public_key_path" {
-  description = "Path to the public key to be loaded into the logger authorized_keys file"
-  type        = string
-  default     = "/home/user/.ssh/id_logger.pub"
-}
-
-# Note: must use ssh key without passphrase. not supported by Terraform.
-variable "private_key_path" {
-  description = "Path to the private key to use to authenticate to logger."
-  type        = string
-  default     = "/home/user/.ssh/id_logger"
-}
-
-variable "ip_whitelist" {
-  description = "A list of CIDRs that will be allowed to access the instances"
-  type        = list(string)
-  default     = [""]
-}
-
-variable "external_dns_servers" {
-  description = "Configure lab to allow external DNS resolution"
-  type        = list(string)
-  default     = ["8.8.8.8"]
+variable "module_context" {
+  description = <<EOD
+  Default context for module variable values.
+  EOD
+  type = map(any)
+  default = {
+    enabled = true
+    create_resource_group = null
+    create_vnet = null
+  }
 }
