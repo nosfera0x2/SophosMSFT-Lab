@@ -16,7 +16,7 @@ module "virtual_network" {
   name            = var.name
   environment     = var.environment
   stage           = var.stage
-  resource_group  = var.resource_group_name
+  resource_group  = module.resource_group.name
   address_space   = var.ipv4_address_space
   tags            = var.tags
   location        = var.location

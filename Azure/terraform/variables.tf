@@ -22,15 +22,3 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
-
-variable "module_context" {
-  description = <<EOD
-  Default context for module variable values.
-  EOD
-  type = map(any)
-  default = {
-    enabled = true
-    create_resource_group = null
-    create_vnet = null
-  }
-}
