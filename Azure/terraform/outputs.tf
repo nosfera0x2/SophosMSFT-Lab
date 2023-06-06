@@ -1,3 +1,3 @@
-output "detection_lab" {
-  value = module.detection_lab
+output "module_outputs" {
+  value = module.lab
 }

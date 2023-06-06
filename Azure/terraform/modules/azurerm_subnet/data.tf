@@ -20,7 +20,7 @@ data "azurerm_resources" "resource_group" {
 
 data "azurerm_resource_group" "default" {
   count = local.e ? 1 : 0
-  name = data.azurerm_resources.resource_group[count.index].resources[count.index].name
+  name  = data.azurerm_resources.resource_group[count.index].resources[count.index].name
 }
 
 data "azurerm_virtual_network" "default" {

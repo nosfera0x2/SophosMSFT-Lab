@@ -45,7 +45,7 @@ locals {
     for net in range(0, local.cidr_reservations) : cidrsubnet(local.base_ipv4_cidr_block, local.required_ipv4_subnet_bits, net)
   ] : local.supplied_ipv4_cidrs
 
-  subnet_names = toset(azurerm_subnet.this.*.name)
+  subnet_names    = toset(azurerm_subnet.this.*.name)
   subnet_prefixes = toset(azurerm_subnet.this.*.address_prefixes)
 }
 
