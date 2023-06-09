@@ -1,24 +1,3 @@
-module "this" {
-  source = "../../modules/label"
-  enabled = var.enabled
-  namespace = var.namespace
-  tenant = var.tenant
-  environment = var.environment
-  location = var.location
-  stage = var.stage
-  name = var.name
-  delimiter = var.delimiter
-  attributes = var.attributes
-  tags = local.tags
-  regex_replace_chars = var.regex_replace_chars
-  label_order = var.label_order
-  id_length_limit = var.id_length_limit
-  label_key_case = var.label_key_case
-  label_value_case = var.label_value_case
-  labels_as_tags = var.labels_as_tags
-  context = var.context
-}
-
 variable "context" {
   type = any
   default = {
@@ -32,6 +11,7 @@ variable "context" {
     delimiter           = null
     attributes          = []
     tags                = {}
+    additional_tag_map  = {}
     regex_replace_chars = null
     label_order         = []
     id_length_limit     = null
@@ -232,23 +212,4 @@ variable "label_value_case" {
     condition     = var.label_value_case == null ? true : contains(["lower", "title", "upper", "none"], var.label_value_case)
     error_message = "Allowed values: `lower`, `title`, `upper`, `none`."
   }
-}
-
-variable "descriptor_formats" {
-  type        = any
-  default     = {}
-  description = <<-EOT
-    Describe additional descriptors to be output in the `descriptors` output map.
-    Map of maps. Keys are names of descriptors. Values are maps of the form
-    `{
-       format = string
-       labels = list(string)
-    }`
-    (Type is `any` so the map values can later be enhanced to provide additional options.)
-    `format` is a Terraform format string to be passed to the `format()` function.
-    `labels` is a list of labels, in order, to pass to `format()` function.
-    Label values will be normalized before being passed to `format()` so they will be
-    identical to how they appear in `id`.
-    Default is `{}` (`descriptors` output will be empty).
-    EOT
 }

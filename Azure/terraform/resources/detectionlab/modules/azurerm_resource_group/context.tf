@@ -16,7 +16,6 @@ module "this" {
   label_key_case = var.label_key_case
   label_value_case = var.label_value_case
   labels_as_tags = var.labels_as_tags
-  context = var.context
 }
 
 variable "context" {
