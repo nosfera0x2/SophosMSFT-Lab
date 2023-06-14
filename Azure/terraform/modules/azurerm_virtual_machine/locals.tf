@@ -1,11 +1,11 @@
 locals {
   enabled = var.enabled
-  e = local.enabled
+  e       = local.enabled
 
   labels = {
     network_interface = {
       namespace = "vnic"
-      
+
     }
   }
 

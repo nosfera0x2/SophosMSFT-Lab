@@ -46,9 +46,9 @@ resource "azurerm_network_interface" "this" {
 #}
 
 #resource "azurerm_virtual_machine" "this" {
-  # checkov:skip=BC_AZR_GENERAL_20: ADD REASON
-  # checkov:skip=BC_AZR_GENERAL_68: ADD REASON
-  # checkov:skip=BC_AZR_GENERAL_75: ADD REASON
+# checkov:skip=BC_AZR_GENERAL_20: ADD REASON
+# checkov:skip=BC_AZR_GENERAL_68: ADD REASON
+# checkov:skip=BC_AZR_GENERAL_75: ADD REASON
 #  count                 = var.vm_instance_count
 #  name                  = format("${module.label.id}%02d", count.index + 1)
 #  resource_group_name   = var.resource_group_name
