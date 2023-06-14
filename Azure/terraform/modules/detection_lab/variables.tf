@@ -139,11 +139,11 @@ variable "virtual_machine" {
     allow_extension_operations = optional(bool)
     provision_vm_agent         = optional(bool)
     encryption_at_host_enabled = optional(bool)
-    winrm_listener = optional(map(object({
+    winrm_listener = optional(object({
       protocol               = optional(string)
       certificate_url        = optional(string)
       certificate_thumbprint = optional(string)
-    })))
+    }))
   }))
 }
 variable "virtual_machine_context" {
@@ -159,9 +159,7 @@ EOD
     location                   = null
     admin_username             = "vagrant"
     admin_password             = "Vagrant123!"
-    computer_name              = null
-    custom_data                = null
-    user_data                  = null
+    computer_name = null
     enable_automatic_updates   = false
     allow_extension_operations = false
     provision_vm_agent         = true

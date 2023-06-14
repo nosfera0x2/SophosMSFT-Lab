@@ -224,7 +224,7 @@ resource "azurerm_windows_virtual_machine" "this" {
   admin_password = local.vm_context.admin_password
   custom_data    = local.custom_data
   #user_data                  = local.user_data
-  computer_name              = format("${local.vm_context.computer_name}%02d", count.index + 1)
+  computer_name              = format("${local.vm.computer_name}%02d", count.index + 1)
   enable_automatic_updates   = local.vm_context.enable_automatic_updates
   patch_mode                 = local.role_config.patch_mode
   hotpatching_enabled        = local.role_config.hotpatching_enabled

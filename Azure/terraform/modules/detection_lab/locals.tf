@@ -52,6 +52,10 @@ locals {
   ### END: lookup role and configuration data ###
   ### BEGIN: virtual machine configuration ###
   instance_count = length(var.virtual_machine)
+
+  vm = {
+    computer_name = element([for vm in var.virtual_machine : vm.computer_name],0)
+  }
   input = {
     win_server                 = var.win_server == null ? var.virtual_machine_context.win_server : var.win_server
     win_desktop                = var.win_desktop == null ? var.virtual_machine_context.win_desktop : var.win_desktop
@@ -60,7 +64,7 @@ locals {
     location                   = var.location == null ? var.virtual_machine_context.location : var.location
     admin_username             = var.admin_username == null ? var.virtual_machine_context.admin_username : var.admin_username
     admin_password             = var.admin_password == null ? var.virtual_machine_context.admin_password : var.admin_password
-    computer_name              = var.computer_name == null ? module.windows_virtual_machine_label.id : var.computer_name
+    computer_name = var.computer_name == null ? var.virtual_machine_context.computer_name : var.computer_name
     enable_automatic_updates   = var.enable_automatic_updates == null ? var.virtual_machine_context.enable_automatic_updates : var.enable_automatic_updates
     allow_extension_operations = var.allow_extension_operations == null ? var.virtual_machine_context.allow_extension_operations : var.allow_extension_operations
     provision_vm_agent         = var.provision_vm_agent == null ? var.virtual_machine_context.provision_vm_agent : var.provision_vm_agent
@@ -76,7 +80,8 @@ locals {
       }
     )
   ])
-  vm_context = {
+
+  context = {
     win_server                 = local.input.win_server
     win_desktop                = local.input.win_desktop
     instance_count             = local.input.instance_count
@@ -89,8 +94,14 @@ locals {
     allow_extension_operations = local.input.allow_extension_operations
     provision_vm_agent         = local.input.provision_vm_agent
     encryption_at_host_enabled = local.input.encryption_at_host_enabled
-    winrm_listener             = local.winrm_listener
+    winrm_listener             = [for key in keys(local.winrm_listener) : merge(
+      {
+        key = key
+        value = local.winrm_listener[key]
+      }
+    )]
   }
+  vm_context = merge(local.context, var.virtual_machine)
   custom_data = local.role_config.custom_data == null ? base64encode(file("${path.module}/${local.role_config.custom_data}")) : null
   #user_data   = local.role_config.user_data == null ? base64encode(file("${path.module}/${local.role_config.user_data}")) : null
   ### END: virtual machine configuration ###
