@@ -1,4 +1,4 @@
-### [BEGIN] variables.tf ###
+### [BEGIN] SMOKE TEST: variables.tf ###
 variable "virtual_machine" {
   description = <<EOD
   Virtual Machine Configuration.
@@ -28,14 +28,14 @@ variable "virtual_machine" {
       identity_ids = optional(list(string))
     }))
     secret = optional(object({
-      certificate  = optional(string)
+      certificate = optional(string)
       key_vault_id = optional(string)
     }))
     size                     = optional(string)
-    provision_vm_agent       = optional(bool)
-    patch_assessment_mode    = optional(string)
-    patch_mode               = optional(string)
-    hotpatching_enabled      = optional(bool)
+    provision_vm_agent    = optional(bool)
+    patch_assessment_mode = optional(string)
+    patch_mode            = optional(string)
+    hotpatching_enabled = optional(bool)
     enable_automatic_updates = optional(bool)
     os_disk = optional(object({
       caching              = optional(string)
@@ -58,12 +58,12 @@ variable "virtual_machine" {
       offer     = optional(string)
       sku       = optional(string)
       version   = optional(string)
-      location  = optional(string)
+      location = optional(string)
     }))
-    computer_name = optional(string)
-    custom_data   = optional(string)
-    user_data     = optional(string)
-    license_type  = optional(string)
+    computer_name       = optional(string)
+    custom_data         = optional(string)
+    user_data           = optional(string)
+    license_type          = optional(string)
     secret = optional(object({
       source_vault_id    = optional(string)
       vault_certificates = optional(list(string))
@@ -81,7 +81,7 @@ variable "virtual_machine" {
       create = optional(string)
       delete = optional(string)
       update = optional(string)
-      read   = optional(string)
+      read = optional(string)
     }))
     ip_configuration = optional(object({
       name                          = optional(string)
@@ -92,97 +92,97 @@ variable "virtual_machine" {
     }))
   }))
   default = {
-    virtual_machine_default = {
-      role                  = "server"
-      is_windows_server     = null
-      instance_count        = null
-      admin_username        = null
-      admin_password        = null
-      resource_group_name   = null
-      location              = null
+    vm = {
+      role = "server"
+      is_windows_server = null
+      instance_count = null
+      admin_username = null
+      admin_password = null
+      resource_group_name = null
+      location = null
       network_interface_ids = []
       additional_unattend_config = {
-        component    = null
-        pass         = null
+        component = null
+        pass = null
         setting_name = null
-        content      = null
+        content = null
       }
       boot_diagnostics = {
-        enabled     = null
+        enabled = null
         storage_uri = null
       }
       allow_extension_operations = null
       identity = {
-        type         = null
+        type = null
         identity_ids = []
       }
       secret = {
-        certificate  = null
+        certificate = null
         key_vault_id = null
       }
-      size                     = null
-      provision_vm_agent       = null
-      patch_assessment_mode    = null
-      patch_mode               = null
-      hotpatching_enabled      = null
+      size = null
+      provision_vm_agent = null
+      patch_assessment_mode = null
+      patch_mode = null
+      hotpatching_enabled = null
       enable_automatic_updates = null
       os_disk = {
-        caching              = null
+        caching = null
         storage_account_type = null
         diff_disk_settings = {
-          option    = null
+          option = null
           placement = null
         }
-        disk_size_gb                     = null
-        write_accelerator_enabled        = null
-        security_encryption_type         = null
+        disk_size_gb = null
+        write_accelerator_enabled = null
+        security_encryption_type = null
         secure_vm_disk_encryption_set_id = null
-        disk_encryption_set_id           = null
+        disk_encryption_set_id = null
       }
       additional_capabilities = {
         ultra_ssd_enabled = null
       }
       source_image_reference = {
         publisher = null
-        offer     = null
-        sku       = null
-        version   = null
-        location  = null
+        offer = null
+        sku = null
+        version = null
+        location = null
       }
       computer_name = null
-      custom_data   = null
-      user_data     = null
-      license_type  = null
+      custom_data = null
+      user_data = null
+      license_type = null
       secret = {
-        source_vault_id    = null
+        source_vault_id = null
         vault_certificates = []
       }
       source_image_id = null
       certificate = {
         store = null
-        url   = null
+        url = null
       }
       winrm_listener = {
-        protocol        = null
+        protocol = null
         certificate_url = null
       }
       timeouts = {
         create = null
         delete = null
         update = null
-        read   = null
+        read = null
       }
       ip_configuration = {
-        name                          = null
+        name = null
         private_ip_address_allocation = null
-        private_ip_address_version    = null
-        private_ip_address            = null
-        primary                       = null
+        private_ip_address_version = null
+        private_ip_address = null
+        primary = null
       }
     }
   }
   validation {
-    condition     = alltrue([for role in var.virtual_machine : contains(["server", "client", "domain_controller"], role["role"])])
+    condition =  alltrue([ for role in var.virtual_machine : contains(["server","client","domain_controller"], role["role"])])
     error_message = <<EOM
     Supported roles are 'server', 'client' and 'domain_controller'.
     EOM
@@ -193,26 +193,32 @@ variable "role" {
   description = <<EOD
   [Required] Virtual Machine Role. Possible values are: `client`, `server` and `domain_controller`
   EOD
-  type        = string
-  default     = "server"
+  type = string
+  default = "server"
+  validation {
+    condition = contains(["server","client","domain_controller"], var.role)
+    error_message = <<EOM
+    Supported roles are 'server', 'client' and 'domain_controller'.
+    EOM
+  }
 }
 
 variable "is_windows_server" {
   description = <<EOD
   [Optional] If set to `true`, source_image_reference or source_image_id will reference either a Windows Server Platform Image or a custom Windows Server Image. If set to `false`, a Windows Desktop Platform Image or custom Windows Desktop Image will be used.
   EOD
-  type        = bool
-  default     = true
+  type = bool
+  default = true
 }
 
 variable "instance_count" {
   description = <<EOD
   [Optional] The number of Windows Virtual Machine instances to create. Defaults to 1.
   EOD
-  type        = number
-  default     = 1
+  type = number
+  default = 1
   validation {
-    condition     = can(regex("[0-9]", var.instance_count))
+    condition = alltrue([type(var.instance_count) == number])
     error_message = <<EOM
     Provided value must be a number.
     EOM
@@ -223,63 +229,42 @@ variable "admin_username" {
   description = <<EOD
   [Optional] The name of the local administrator account for the Windows Virtual Machine. If not provided, the default value is `Administrator`.
   EOD
-  type        = string
-  default     = "Administrator"
+  type = string
+  default = "Administrator"
 }
 
 variable "admin_password" {
   description = <<EOD
   [Required] The password of the local administrator account for the Windows Virtual Machine.
   EOD
-  type        = string
-  default     = null
-  sensitive = true
-}
-
-variable "resource_group_name" {
-  description = <<EOD
-  [Optional] The name of an existing resource group. If not provided, a new resource group will be created.
-  EOD
-  type        = string
-  default     = null
-}
-
-variable "azure_location" {
-  description = <<EOD
-  [Required] The Azure Region in which to create the virtual machine.
-  EOD
-  type        = string
-  default     = null
-}
-
-variable "network_interface_ids" {
-  description = <<EOD
-  [Optional] A list of network interface ID's to associate with the virtual machine. If none are provided, a new network interface will be created for each instance of the virtual machine being created.
-  EOD
-  type        = list(string)
-  default     = []
-}
-
-variable "additional_unattend_config" {
-  description = <<EOD
-  [Optional] Additional unattend configuration data to pass to the virtual machine.
-  EOD
-  type = object({
-    component    = string
-    pass         = string
-    setting_name = string
-    content      = string
-  })
-  default = {
-    component    = null
-    pass         = null
-    setting_name = null
-    content      = null
+  type = string
+  default = null
+  validation {
+    condition = length(var.admin_password) >= 10
+    error_message = <<EOM
+    Provided value must be at least 10 characters long.
+    EOM
+  }
+  validation {
+    condition = can(regex("[A-Z]", var.admin_password))
+    error_message = <<EOM
+    Provided value must contain at least one uppercase letter.
+    EOM
+  }
+  validation {
+    condition = can(regex("[a-z]", var.admin_password))
+    error_message = <<EOM
+    Provided value must contain at least one lowercase letter.
+    EOM
+  }
+  validation {
+    condition = can(regex("[^a-zA-Z0-9]", var.admin_password))
+    error_message = <<EOM
+    Provided value must contain at least one special character.
+    EOM
+  }
+  validation {
+    
   }
 }
-
-variable "boot_diagnostics" {
-  description = 
-}
-
-### [END] variables.tf ###
+### [END] SMOKE TEST: variables.tf ###

@@ -4,18 +4,19 @@ module "this" {
   namespace           = var.namespace
   tenant              = var.tenant
   environment         = var.environment
-  location            = var.location
   stage               = var.stage
   name                = var.name
+  location            = var.location
   delimiter           = var.delimiter
   attributes          = var.attributes
   tags                = var.tags
-  regex_replace_chars = var.regex_replace_chars
   label_order         = var.label_order
+  regex_replace_chars = var.regex_replace_chars
   id_length_limit     = var.id_length_limit
   label_key_case      = var.label_key_case
   label_value_case    = var.label_value_case
   labels_as_tags      = var.labels_as_tags
+  context             = var.context
 }
 
 variable "context" {

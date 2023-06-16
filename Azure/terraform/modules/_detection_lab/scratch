@@ -1,0 +1,69 @@
+resource "azurerm_windows_virtual_machine" "this" {
+  # checkov:skip=BC_AZR_GENERAL_14: Virtual Machine Extensions are not installed
+  count = local.e == true ? local.instance_count : 0
+  name                  = format("${module.windows_virtual_machine_label.id}%02d", count.index + 1)
+  resource_group_name   = azurerm_resource_group.this[count.index].name
+  location              = var.location
+  size                  = local.role_config.size
+  network_interface_ids = [azurerm_network_interface.this[count.index].id]
+
+  admin_username             = local.admin_username
+  admin_password             = local.admin_password
+  computer_name              = format("${local.computer_name[count.index]}%02d", count.index + 1)
+  enable_automatic_updates   = local.enable_automatic_updates
+  patch_mode                 = local.patch_mode
+  hotpatching_enabled        = local.hotpatching_enabled
+  license_type               = local.role_config.license_type
+  provision_vm_agent         = local.provision_vm_agent
+  encryption_at_host_enabled = local.encryption_at_host_enabled
+  allow_extension_operations = local.allow_extension_operations
+
+  dynamic "source_image_reference" {
+    for_each = local.win_server == true ? [1] : []
+    content {
+      publisher = data.azurerm_platform_image.win_server[count.index].publisher
+      offer     = data.azurerm_platform_image.win_server[count.index].offer
+      sku       = data.azurerm_platform_image.win_server[count.index].sku
+      version   = data.azurerm_platform_image.win_server[count.index].version
+    }
+  }
+
+  dynamic "source_image_reference" {
+    for_each = local.win_server == false ? [1] : []
+    content {
+      publisher = data.azurerm_platform_image.win_desktop[count.index].publisher
+      offer     = data.azurerm_platform_image.win_desktop[count.index].offer
+      sku       = data.azurerm_platform_image.win_desktop[count.index].sku
+      version   = data.azurerm_platform_image.win_desktop[count.index].version
+    }
+  }
+
+  dynamic "os_disk" {
+    for_each = (local.e == true && local.instance_count[count.index] > 0) ? [local.disk_config] : []
+    iterator = disk
+    content {
+      caching                   = disk.value.caching
+      storage_account_type      = disk.value.storage_account_type
+      disk_size_gb              = disk.value.disk_size_gb
+      write_accelerator_enabled = disk.value.write_accelerator_enabled
+    }
+  }
+
+  dynamic "winrm_listener" {
+    for_each = (local.e == true && local.instance_count[count.index] > 0 && var.winrm_https_listener == true) ? [1] : []
+    content {
+      protocol               = local.winrm_listener["https"].protocol
+      certificate_url        = local.winrm_listener["https"].certificate_url
+    }
+  }
+
+  dynamic "winrm_listener" {
+    for_each = (local.e == true && local.instance_count[count.index] > 0 && var.winrm_https_listener == false) ? [1] : []
+    content {
+      protocol               = local.winrm_listener["http"].protocol
+      certificate_url        = local.winrm_listener["http"].certificate_url
+    }
+  }
+
+  tags = module.windows_virtual_machine_label.tags
+}

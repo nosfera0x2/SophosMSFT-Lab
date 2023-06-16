@@ -1,0 +1,60 @@
+virtual_machine = flatten([
+	for vm_key, vm in var.virtual_machine : [
+		for index in range(vm.instance_count) : {
+			role                       = vm.role
+			is_windows_server          = vm.is_windows_server
+			instance_count             = vm.instance_count
+			admin_username             = vm.admin_username
+			resource_group_name        = vm.resource_group_name
+			location                   = vm.location
+			network_interface_ids      = vm.network_interface_ids
+			os_disk                    = vm.os_disk
+			size                       = vm.size
+			enable_automatic_updates   = vm.enable_automatic_updates
+			additional_capabilities    = vm.additional_capabilities
+			additional_unattend_config = vm.additional_unattend_config
+			allow_extension_operations = vm.allow_extension_operations
+			boot_diagnostics           = vm.boot_diagnostics
+			computer_name              = vm.computer_name
+			custom_data                = vm.custom_data
+			user_data                  = vm.user_data
+			hotpatching_enabled        = vm.hotpatching_enabled
+			identity                   = vm.identity
+			license_type               = vm.license_type
+			patch_assessment_mode      = vm.patch_assessment_mode
+			patch_mode                 = vm.patch_mode
+			secret                     = vm.secret
+			source_image_id            = vm.source_image_id
+			source_image_reference     = vm.source_image_reference
+			certificate                = vm.certificate
+			winrm_listener             = vm.winrm_listener
+			timeouts                   = vm.timeouts
+		}
+	]
+])
+
+### main
+module "label" {
+  source          = "./../label"
+  enabled         = module.this.enabled
+  name            = var.name
+  namespace       = "detectionlab"
+  environment     = "azure"
+  stage           = var.stage
+  location        = var.location
+  label_order     = ["name", "namespace", "environment", "location"]
+  id_length_limit = 30
+  context         = module.this.context
+}
+resource "random_password" "this" {
+  count   = local.e ? 1 : 0
+  length  = 16
+  special = true
+}
+
+resource "terraform_data" "virtual_machine" {
+  for_each = var.virtual_machine
+  input = {
+    value = coalesce(var.virtual_machine, lookup(var.virtual_machine_defaults, local.virtual_machine.role))
+  }
+}

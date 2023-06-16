@@ -1,5 +1,5 @@
 module "this" {
-  source              = "../label"
+  source              = "./modules/label"
   enabled             = var.enabled
   namespace           = var.namespace
   tenant              = var.tenant
@@ -9,7 +9,7 @@ module "this" {
   name                = var.name
   delimiter           = var.delimiter
   attributes          = var.attributes
-  tags                = var.tags
+  tags                = local.tags
   regex_replace_chars = var.regex_replace_chars
   label_order         = var.label_order
   id_length_limit     = var.id_length_limit
